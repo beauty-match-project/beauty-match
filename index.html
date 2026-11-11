@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Beauty Match — пространство красоты</title>
+<title>Beauty Match — пространство красоты · Stage 13</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--pink:#e98da9;--pink2:#f8dce5;--ink:#3c3035;--muted:#8c7b82;--cream:#fffaf7;--white:#fff;--line:#f0e4e7;--green:#6f9c83;--shadow:0 18px 50px #8b52601a}
 *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.5 Inter,Arial,sans-serif}
@@ -47,6 +48,11 @@ textarea{min-height:95px;resize:vertical}.field{display:grid;gap:6px;margin:12px
 .profiletop{display:flex;gap:15px;align-items:center;margin-bottom:20px}
 .stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;flex:1}
 .stat strong{display:block;font:26px Georgia,serif}
+
+.person-card{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;min-height:245px}
+.person-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#efc3d1}
+.person-card .avatar{font-weight:700;color:#8d5b70}
+@media(max-width:760px){#peopleFeed{grid-template-columns:1fr}}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding:28px}.heroart{height:170px}.orb{width:150px;height:150px;font-size:58px}.grid{grid-template-columns:1fr}.sectionhead{align-items:start;flex-direction:column}.nav{padding:12px 15px}.wrap{padding:20px 15px 55px}.hero h1{font-size:39px}}
 
 /* Beauty Match: мягкие анимации и микро-взаимодействия */
@@ -73,6 +79,112 @@ input,textarea,select{transition:border-color .2s ease,box-shadow .2s ease,backg
 @keyframes bm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
+
+/* Stage 11: expanded participant profile and portfolio gallery */
+.profile-page{position:fixed;inset:0;z-index:20;background:var(--cream);overflow:auto}
+.profile-page-inner{max-width:1000px;margin:auto;padding:22px}
+.profile-page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.profile-cover{background:linear-gradient(120deg,#f9e2e9,#fff2e9);border:1px solid #f1dfe4;border-radius:26px;padding:26px;display:flex;gap:18px;align-items:center}
+.profile-cover .avatar{width:76px;height:76px;border-radius:24px;font-size:32px}
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.portfolio-slide{min-height:210px;border-radius:20px;background:linear-gradient(145deg,#f7dce5,#fff1e9 55%,#ead8e2);display:grid;place-items:center;text-align:center;padding:20px;color:#805568;border:1px solid #f0dce3}
+.portfolio-slide:nth-child(2){background:linear-gradient(145deg,#f1e0ea,#fce9dc)}
+.portfolio-slide:nth-child(3){background:linear-gradient(145deg,#f9e6e9,#e9e3f0)}
+.gallery-controls{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px}
+.gallery-dots{display:flex;gap:6px}.gallery-dot{width:8px;height:8px;border-radius:50%;background:#e8cbd5}.gallery-dot.active{background:#bd7892;width:20px;border-radius:10px}
+.profile-info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+.profile-info-grid .card{margin:0}
+@media(max-width:650px){.profile-page-inner{padding:15px}.profile-cover{align-items:flex-start;padding:18px}.portfolio-grid{grid-template-columns:1fr}.portfolio-slide{min-height:175px}.profile-info-grid{grid-template-columns:1fr}}
+
+
+
+/* Stage 11.1: живые градиенты, мягкие цветовые переходы и реакция на курсор */
+:root{--bm-blush:#ef9db7;--bm-lilac:#c9b5e8;--bm-peach:#f5c6ad;--bm-cursor-x:50%;--bm-cursor-y:50%}
+.btn{background:linear-gradient(115deg,#e98da9 0%,#d995b8 48%,#c6a4d9 100%);background-size:180% 180%;transition:background-position .55s ease,transform .22s ease,box-shadow .35s ease,filter .25s ease}
+.btn:hover{background-position:100% 0;box-shadow:0 12px 28px #c17c9c40;filter:saturate(1.08)}
+.btn.light{background:linear-gradient(115deg,#fff 0%,#fff7fa 48%,#f4edff 100%);background-size:200% 200%;transition:background-position .45s ease,border-color .3s ease,color .3s ease,transform .22s ease,box-shadow .3s ease}
+.btn.light:hover{background-position:100% 0;border-color:#e6bfd0;color:#9b607e;box-shadow:0 8px 22px #bd8ba51c}
+.btn.soft{background:linear-gradient(110deg,#f8dce5,#f3e4f7,#fce9dc);background-size:200% 200%;transition:background-position .5s ease,transform .22s ease}
+.btn.soft:hover{background-position:100% 0}
+.card,.stat,.rolecard,.person-card{position:relative;isolation:isolate;overflow:hidden;transition:transform .32s cubic-bezier(.2,.75,.25,1),box-shadow .35s ease,border-color .3s ease,background .35s ease}
+.card::before,.stat::before,.rolecard::before,.person-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;background:radial-gradient(260px circle at var(--bm-x,50%) var(--bm-y,50%),#f8dce58c,transparent 72%);transition:opacity .35s ease}
+.card:hover::before,.stat:hover::before,.rolecard:hover::before,.person-card:hover::before{opacity:1}
+.rolecard:hover,.person-card:hover{transform:translateY(-6px) scale(1.008);border-color:#e9b7ca;box-shadow:0 18px 38px #a86d831c}
+.pill{transition:background .3s ease,color .3s ease,transform .25s ease,box-shadow .3s ease}
+.card:hover .pill,.person-card:hover .pill{transform:translateY(-1px);box-shadow:0 4px 12px #d99bb51c}
+.tab{background-image:linear-gradient(110deg,#fff,#fff7fa,#f5effb);background-size:200% 100%;transition:background-position .4s ease,background-color .25s ease,color .25s ease,border-color .25s ease,transform .2s ease,box-shadow .25s ease}
+.tab:hover{background-position:100% 0;box-shadow:0 6px 16px #bd8ba51a}
+input:hover,textarea:hover,select:hover{border-color:#e7bfd0;background:#fffdfd}
+.avatar{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease,filter .35s ease}
+.card:hover .avatar,.profile-cover:hover .avatar{transform:rotate(-4deg) scale(1.06);box-shadow:0 8px 20px #c98ba52e;filter:saturate(1.12)}
+.profile-cover{background-image:linear-gradient(115deg,#fbe8ed,#fff4ed 52%,#f0e8fa);background-size:180% 180%;transition:background-position .8s ease,box-shadow .35s ease}
+.profile-cover:hover{background-position:100% 0;box-shadow:0 16px 36px #b77b9120}
+.portfolio-slide{transition:opacity .28s ease,transform .35s ease,filter .35s ease}
+.portfolio-slide:hover{transform:translateY(-3px) scale(1.012);filter:saturate(1.08)}
+.gallery-dot{transition:width .3s ease,background .3s ease,transform .3s ease}
+.gallery-dot:hover{transform:scale(1.25)}
+.modalback{backdrop-filter:blur(7px)}
+@media(prefers-reduced-motion:reduce){.card,.stat,.rolecard,.person-card,.btn,.tab,.avatar,.portfolio-slide,*::before,*::after{transition:none!important;animation:none!important}}
+
+
+/* Stage 12: editorial comparison cards + joyful favorite interaction */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+body{font-family:'DM Sans',Inter,Arial,sans-serif}
+h1,h2,.logo,.stat strong{font-family:'Playfair Display',Georgia,serif}
+.compare-shell{display:grid;grid-template-columns:repeat(var(--compare-count,2),minmax(0,1fr));gap:14px;margin:18px 0}
+.compare-person{position:relative;overflow:hidden;background:linear-gradient(155deg,#fff 0%,#fff9fb 62%,#f7f0fb 100%);border:1px solid #efdce5;border-radius:22px;padding:18px;box-shadow:0 12px 32px #9e6b8012;animation:compare-arrive .48s cubic-bezier(.2,.8,.2,1) both}
+.compare-person:nth-child(2){animation-delay:.07s}.compare-person:nth-child(3){animation-delay:.14s}
+.compare-person:before{content:'';position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#ed9db8,#d7b7e8,#f4c8b5)}
+.compare-person h3{font:600 21px 'Playfair Display',Georgia,serif;margin:4px 0 12px}
+.compare-value{padding:11px 0;border-top:1px solid #f0e5e9;font-size:13px;line-height:1.55}
+.compare-value b{display:block;color:#a16e84;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+.compare-role{display:inline-flex;padding:5px 10px;border-radius:99px;background:#fbeaf0;color:#98617a;font-size:11px;font-weight:700}
+.compare-note{font:italic 13px 'Playfair Display',Georgia,serif;color:#9b7b89;margin:8px 0 0}
+.favorite-btn{position:relative;overflow:visible;min-width:42px;transition:transform .2s ease,color .2s ease,background .2s ease}
+.favorite-btn.is-saved{background:linear-gradient(135deg,#fde5ed,#f6e8fb)!important;color:#c35f87!important;border-color:#efc4d5!important}
+.favorite-btn.bm-heart-pop{animation:bm-heart-pop .48s cubic-bezier(.2,.8,.2,1)}
+.bm-heart-particle{position:absolute;pointer-events:none;left:50%;top:50%;font-size:13px;animation:bm-heart-fly .72s ease-out forwards;z-index:4}
+@keyframes bm-heart-pop{0%{transform:scale(1)}35%{transform:scale(1.28) rotate(-7deg)}65%{transform:scale(.92) rotate(5deg)}100%{transform:scale(1)}}
+@keyframes bm-heart-fly{0%{opacity:0;transform:translate(-50%,-30%) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% - 35px)) scale(1.25)}}
+@keyframes compare-arrive{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:680px){.compare-shell{grid-template-columns:1fr}.compare-person{padding:16px}}
+@media(prefers-reduced-motion:reduce){.compare-person,.favorite-btn.bm-heart-pop,.bm-heart-particle{animation:none!important}}
+
+
+/* Stage 13 — editorial typography, lively filters and polished lists */
+:root{--bm-lilac:#c9b1df;--bm-rose:#e98da9;--bm-glass:#fffdfd}
+body{font-family:'DM Sans',Inter,Arial,sans-serif;letter-spacing:.005em}
+h1,h2,.logo{font-family:'Playfair Display',Georgia,serif}
+h1{letter-spacing:-1.8px}h2{letter-spacing:-.7px}h3{letter-spacing:-.25px}
+.controls{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px;margin:14px 0 18px;border:1px solid #f1e1e8;border-radius:20px;background:linear-gradient(120deg,#fff 0%,#fff8fb 55%,#fbf7ff 100%);box-shadow:0 9px 28px #9a60700c;isolation:isolate}
+.controls:before{content:'✦';position:absolute;right:15px;top:-10px;color:#d5a7bd;background:var(--cream);padding:0 7px;font-size:15px}
+.controls input,.controls select{min-height:46px;border:1px solid #eadde4;border-radius:14px;background:#fff;color:#55434c;padding:10px 14px;outline:none;box-shadow:0 2px 8px #6d3f4d08;transition:border-color .22s,box-shadow .22s,transform .22s,background .22s}
+.controls input{flex:1 1 230px;min-width:180px;padding-left:42px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23bd8da2' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") no-repeat 14px center}
+.controls select{appearance:none;min-width:150px;padding-right:38px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b57e98' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 13px center}
+.controls input:focus,.controls select:focus{border-color:#d99bb5;box-shadow:0 0 0 4px #e9b6ca30,0 8px 20px #9a607014;transform:translateY(-1px);background-color:#fff}
+.controls input::placeholder{color:#b29da7}
+.bm-filter-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-7px 0 16px;min-height:27px;color:#9a7e8b;font-size:12px}
+.bm-filter-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid #f0dce5;border-radius:999px;background:#fff;color:#96677d;animation:bmChipIn .28s both}
+.bm-filter-chip b{font-weight:700;color:#805269}
+.bm-filter-reset{border:0;background:transparent;color:#b06f8d;text-decoration:underline;text-underline-offset:3px;font:inherit;cursor:pointer;padding:4px 3px}
+.bm-filter-reset:hover{color:#805269}
+#peopleFeed,#listingFeed{align-items:stretch}
+#peopleFeed .person-card,#listingFeed>.card{transform-origin:50% 20%;will-change:transform,opacity}
+.bm-list-enter{animation:bmListEnter .48s cubic-bezier(.2,.8,.2,1) both;animation-delay:var(--bm-delay,0ms)}
+.person-card{border:1px solid #f0e2e8;background:linear-gradient(155deg,#fff 0%,#fff 72%,#fff8fb 100%)}
+.person-card:hover{border-color:#e8bfd0;box-shadow:0 18px 42px #a968801c}
+#peopleCount{display:flex;align-items:center;gap:7px;color:#98778a;font-weight:600;letter-spacing:.02em}
+#peopleCount:before{content:'✧';color:#d58eac;font-size:17px}
+#peopleCompareTray{border:1px solid #efdce5!important;background:linear-gradient(110deg,#fff,#fff7fb 60%,#faf6ff)!important;box-shadow:0 10px 28px #8b526012;animation:bmTrayIn .35s ease both}
+.empty{border:1px dashed #e9cbd8;border-radius:20px;background:linear-gradient(135deg,#fff,#fff8fb);padding:26px;text-align:center;color:#9a7d8a;animation:bmListEnter .35s ease both}
+#listingFeed>.card{border:1px solid #f0e2e8;background:linear-gradient(150deg,#fff,#fff9fb)}
+#listingFeed .favorite-btn{min-width:42px;min-height:40px}
+@keyframes bmListEnter{from{opacity:0;transform:translateY(13px) scale(.985);filter:blur(3px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes bmChipIn{from{opacity:0;transform:translateY(5px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bmTrayIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.controls{padding:11px;border-radius:17px;gap:8px}.controls input,.controls select{max-width:none!important;width:100%;flex-basis:100%}.controls:before{right:12px}.bm-filter-meta{margin-top:-5px}#peopleCompareTray{align-items:flex-start!important}}
+@media(prefers-reduced-motion:reduce){.bm-list-enter,.bm-filter-chip,#peopleCompareTray,.empty{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -92,9 +204,14 @@ input,textarea,select{transition:border-color .2s ease,box-shadow .2s ease,backg
 <div class="grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
 <div class="stat"><span class="small muted">Объявления</span><strong id="statListings">0</strong></div><div class="stat"><span class="small muted">Отклики</span><strong id="statReplies">0</strong></div><div class="stat"><span class="small muted">Избранное</span><strong id="statFavs">0</strong></div>
 </div>
-<div class="tabs"><button class="tab active" data-tab="feed">Каталог</button><button class="tab" data-tab="profile">Моя анкета</button><button class="tab" data-tab="mine">Мои действия</button><button class="tab" data-tab="settings">Подключение базы</button></div>
+<div class="tabs"><button class="tab active" data-tab="feed">Объявления</button><button class="tab" data-tab="people">Анкеты</button><button class="tab" data-tab="profile">Моя анкета</button><button class="tab" data-tab="mine">Мои действия</button><button class="tab" data-tab="settings">Подключение базы</button></div>
 <div id="feedTab" class="section"><div class="sectionhead"><div><h2>Подходящие предложения</h2><p class="muted">Выбирайте то, что вам подходит.</p></div><button class="btn hidden" id="newListingBtn" onclick="openListing()">＋ Новое объявление</button></div>
 <div class="controls"><input id="search" placeholder="Поиск по услуге или городу..." style="max-width:330px"><select id="category" style="max-width:210px"><option value="">Все направления</option><option>Брови</option><option>Ресницы</option><option>Маникюр</option><option>Макияж</option><option>Волосы</option><option>Косметология</option></select></div><div id="listingFeed" class="listing"></div></div>
+<div id="peopleTab" class="section hidden">
+<div class="sectionhead"><div><h2>Найди своего мастера</h2><p class="muted">Знакомьтесь с участниками Beauty Match и изучайте их анкеты.</p></div><span class="pill">Каталог участников</span></div>
+<div class="controls"><input id="peopleSearch" placeholder="Имя, город или направление..." style="max-width:330px"><select id="peopleRole" style="max-width:190px"><option value="master">Мастера</option><option value="model">Модели</option><option value="all">Все участники</option></select><select id="peopleSort" style="max-width:190px"><option value="new">Сначала новые</option><option value="name">По имени</option><option value="city">По городу</option></select></div>
+<div id="peopleFeed" class="grid"></div><p id="peopleStatus" class="small muted" style="margin-top:12px"></p>
+</div>
 <div id="profileTab" class="section hidden"><div class="card"><h3>Моя анкета</h3><p class="muted small">Заполните информацию, которую хотите показывать другим пользователям.</p><div class="field"><label>Имя или псевдоним</label><input id="pName" maxlength="50"></div><div class="field"><label>Город</label><input id="pCity" maxlength="60"></div><div class="field"><label>Специализация / интерес</label><input id="pSpec" maxlength="80"></div><div class="field"><label>Опыт</label><input id="pExp" maxlength="80" placeholder="Например: начинающий мастер"></div><div class="field"><label>О себе</label><textarea id="pAbout" maxlength="500"></textarea></div><button class="btn" onclick="saveProfile()">Сохранить анкету</button></div></div>
 <div id="mineTab" class="section hidden"><div id="mineContent"></div></div>
 <div id="settingsTab" class="section hidden"><div class="card"><h3>Подключение общей базы данных</h3><p class="muted">Здесь настраивается подключение сайта к Supabase. После сохранения настроек сайт использует настоящую авторизацию и облачные таблицы.</p><div class="notice">Не вводите сюда пароль от личной почты или других сервисов. Используйте только публичный anon key своего проекта Supabase. Секретный service_role / secret key нельзя помещать в браузер.</div><div class="field"><label>Supabase Project URL</label><input id="sbUrl" value="https://svjzbcpixaocfkzjhcxt.supabase.co" placeholder="https://your-project.supabase.co"></div><div class="field"><label>Supabase Publishable key</label><textarea id="sbKey" placeholder="sb_publishable_…" style="min-height:75px"></textarea></div><button class="btn" onclick="saveBackend()">Сохранить настройки</button> <button class="btn light" onclick="testBackend()">Проверить подключение</button><p id="backendStatus" class="small muted"></p><hr style="border:0;border-top:1px solid var(--line);margin:20px 0"><h3>Состояние интеграции</h3><p class="muted small">Авторизация, профили, каталог, отклики и избранное работают через Supabase после настройки таблиц и ключа. Перед публикацией нужно проверить политики доступа и подтверждение электронной почты.</p></div></div>
@@ -106,7 +223,7 @@ input,textarea,select{transition:border-color .2s ease,box-shadow .2s ease,backg
 const $=id=>document.getElementById(id);
 const read=(k,d)=>{try{return JSON.parse(localStorage.getItem('bm_'+k))??d}catch{return d}};
 const write=(k,v)=>localStorage.setItem('bm_'+k,JSON.stringify(v));
-let sb=null, user=null, profile=null, listings=[], applications=[], favorites=[], demoMode=false;
+let sb=null, user=null, profile=null, listings=[], applications=[], favorites=[], demoMode=false, people=[], peopleFavorites=[];
 let cfg=read('sb',null);
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function modal(content){$('modalRoot').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><div class="modal"><div class="modalhead"><div class="logo">beauty<span>match</span></div><button class="close" onclick="closeModal()">×</button></div>${content}</div></div>`}
@@ -118,24 +235,80 @@ async function testBackend(){try{if(!cfg){cfg={url:$('sbUrl').value.trim().repla
 function openAuth(role='model',mode='signup'){modal('<h2>Авторизация пока отключена</h2><p class="muted">Сейчас доступен только демонстрационный режим с вымышленными данными. Beauty Match предназначен для совершеннолетних пользователей (18+); регистрация и вход будут включены ответственным взрослым перед запуском.</p><button class="btn" onclick="closeModal()">Понятно</button>');return;if(!cfg?.key){modal(`<h2>Подключим Beauty Match</h2><p class="muted">Перед регистрацией укажем публичные настройки Supabase.</p><div class="field"><label>Supabase Project URL</label><input id="sbUrl" value="https://svjzbcpixaocfkzjhcxt.supabase.co"></div><div class="field"><label>Supabase Publishable key</label><textarea id="sbKey" placeholder="sb_publishable_…"></textarea></div><button class="btn" onclick="saveBackend()">Сохранить и проверить</button><p id="backendStatus" class="small muted"></p>`);return;}const isSignup=mode==='signup';modal(`<h2>${isSignup?'Создать аккаунт':'Войти в Beauty Match'}</h2><p class="muted">${isSignup?'Регистрация через защищённую авторизацию Supabase.':'Введите данные своего аккаунта.'}</p>${isSignup?`<div class="field"><label>Имя или псевдоним</label><input id="authName" maxlength="60" placeholder="Как к вам обращаться"></div><div class="field"><label>Я регистрируюсь как</label><select id="authRole"><option value="model" ${role==='model'?'selected':''}>Модель</option><option value="master" ${role==='master'?'selected':''}>Мастер</option></select></div>`:''}<div class="field"><label>Электронная почта</label><input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></div><div class="field"><label>Пароль</label><input id="authPassword" type="password" minlength="8" autocomplete="${isSignup?'new-password':'current-password'}" placeholder="Не менее 8 символов"></div>${isSignup?`<p class="notice">Платформа предназначена исключительно для совершеннолетних (18+). Регистрацию и тестирование аккаунта должен выполнять совершеннолетний пользователь. Не вводите чужие данные.</p>`:''}<button class="btn" style="width:100%;margin-top:12px" onclick="${isSignup?'signUp()':'signIn()'}">${isSignup?'Зарегистрироваться':'Войти'}</button><p class="small muted" style="margin-top:14px">${isSignup?'Уже есть аккаунт?':'Нет аккаунта?'} <a href="#" onclick="event.preventDefault();openAuth('${role}','${isSignup?'signin':'signup'}')">${isSignup?'Войти':'Зарегистрироваться'}</a></p><p id="authStatus" class="small muted"></p>`)}
 async function signUp(){const name=$('authName').value.trim(),email=$('authEmail').value.trim(),password=$('authPassword').value,role=$('authRole').value;if(!name||!email||password.length<8)return $('authStatus').textContent='Заполните имя, email и пароль не короче 8 символов.';try{const client=getClient();const {data,error}=await client.auth.signUp({email,password,options:{data:{display_name:name,role}}});if(error)throw error;if(data.session){closeModal();await loadCurrentUser();}else{$('authStatus').textContent='Письмо для подтверждения отправлено на указанную почту. После подтверждения войдите в аккаунт.';}}catch(e){$('authStatus').textContent=e.message||'Не удалось зарегистрироваться.'}}
 async function signIn(){const email=$('authEmail').value.trim(),password=$('authPassword').value;if(!email||!password)return $('authStatus').textContent='Введите email и пароль.';try{const {data,error}=await getClient().auth.signInWithPassword({email,password});if(error)throw error;closeModal();await loadCurrentUser(data.user)}catch(e){$('authStatus').textContent=e.message||'Не удалось войти.'}}
-async function logout(){if(!demoMode){try{if(sb)await sb.auth.signOut()}catch(e){console.error(e)}}demoMode=false;user=null;profile=null;listings=[];applications=[];favorites=[];$('demoNotice').classList.add('hidden');$('app').classList.add('hidden');$('home').classList.remove('hidden');$('profileBtn').classList.add('hidden');$('authBtn').classList.remove('hidden')}
+async function logout(){if(!demoMode){try{if(sb)await sb.auth.signOut()}catch(e){console.error(e)}}demoMode=false;user=null;profile=null;listings=[];applications=[];favorites=[];people=[];$('demoNotice').classList.add('hidden');$('app').classList.add('hidden');$('home').classList.remove('hidden');$('profileBtn').classList.add('hidden');$('authBtn').classList.remove('hidden')}
 async function loadCurrentUser(authUser){try{const client=getClient();let au=authUser;if(!au){const {data,error}=await client.auth.getUser();if(error)throw error;au=data.user}if(!au){user=null;return}const {data:pr,error:pe}=await client.from('profiles').select('*').eq('id',au.id).single();if(pe)throw pe;user=au;profile=pr;closeModal();showApp();await refreshData()}catch(e){alert('Не удалось загрузить профиль: '+(e.message||e));}}
 async function init(){if(cfg){$('sbUrl').value=cfg.url||'';$('sbKey').value=cfg.key||'';try{getClient();const {data:{subscription}}=sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_IN'&&session?.user){setTimeout(()=>loadCurrentUser(session.user),0)}if(event==='SIGNED_OUT'){user=null;profile=null}});const {data:{session}}=await sb.auth.getSession();if(session?.user)await loadCurrentUser(session.user)}catch(e){console.warn(e)}}}
 function showApp(){$('home').classList.add('hidden');$('app').classList.remove('hidden');$('authBtn').classList.add('hidden');$('profileBtn').classList.remove('hidden');$('demoNotice').classList.toggle('hidden',!demoMode);$('welcome').textContent='Привет, '+(profile.display_name||'')+'!';$('roleText').textContent=profile.role==='master'?'Ваш кабинет мастера':'Ваш кабинет модели';$('newListingBtn').classList.toggle('hidden',profile.role!=='master');loadProfile();showTab('feed')}
 function loadProfile(){if(!profile)return;$('pName').value=profile.display_name||'';$('pCity').value=profile.city||'';$('pSpec').value=profile.specialization||'';$('pExp').value=profile.experience||'';$('pAbout').value=profile.about||''}
 async function refreshData(){if(!user)return;if(demoMode){renderFeed();renderStats();if(!$('mineTab').classList.contains('hidden'))renderMine();return}const client=getClient();const [l,a,f]=await Promise.all([client.from('listings').select('*').eq('status','active').order('created_at',{ascending:false}),client.from('applications').select('*'),client.from('favorites').select('*')]);if(l.error)throw l.error;if(a.error)throw a.error;if(f.error)throw f.error;listings=l.data||[];applications=a.data||[];favorites=f.data||[];renderFeed();renderStats();if(!$('mineTab').classList.contains('hidden'))await renderMine()}
 async function saveProfile(){const patch={display_name:$('pName').value.trim(),city:$('pCity').value.trim(),specialization:$('pSpec').value.trim(),experience:$('pExp').value.trim(),about:$('pAbout').value.trim()};if(!patch.display_name)return alert('Укажите имя или псевдоним.');if(demoMode){profile={...profile,...patch};$('welcome').textContent='Привет, '+profile.display_name+'!';return alert('Изменения показаны только в демо-режиме и не сохраняются после выхода.')}const {data,error}=await getClient().from('profiles').update(patch).eq('id',user.id).select().single();if(error)return alert('Не удалось сохранить анкету: '+error.message);profile=data;$('welcome').textContent='Привет, '+profile.display_name+'!';alert('Анкета сохранена в Supabase.')}
-function showTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));['feed','profile','mine','settings'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==tab));if(tab==='mine')renderMine()}
+function showTab(tab){document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));['feed','people','profile','mine','settings'].forEach(t=>$(t+'Tab').classList.toggle('hidden',t!==tab));if(tab==='mine')renderMine();if(tab==='people')loadPeople()}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
 function renderStats(){$('statListings').textContent=listings.filter(x=>x.owner_id===user?.id).length;$('statReplies').textContent=applications.filter(x=>x.model_id===user?.id||listings.some(l=>l.id===x.listing_id&&l.owner_id===user?.id)).length;$('statFavs').textContent=favorites.filter(x=>x.user_id===user?.id).length}
-function renderFeed(){if(!user)return;const q=$('search').value.toLowerCase(),cat=$('category').value;const arr=listings.filter(l=>(!cat||l.category===cat)&&(!q||(l.title+' '+l.city+' '+l.description).toLowerCase().includes(q)));$('listingFeed').innerHTML=arr.length?arr.map(l=>`<article class="card"><div class="row between"><span class="pill">${esc(l.category)}</span><button class="btn light" style="padding:6px 10px" onclick="toggleFav('${l.id}')">${favorites.some(f=>f.listing_id===l.id&&f.user_id===user.id)?'♥':'♡'}</button></div><h3 style="margin-top:10px">${esc(l.title)}</h3><p class="muted small">${esc(l.city)} · ${esc(l.appointment_time||'По договорённости')}</p><p>${esc(l.description)}</p><div class="row between"><strong>${esc(l.price)}</strong><button class="btn" onclick="respond('${l.id}')">${profile.role==='model'?'Откликнуться':'Подробнее'}</button></div></article>`).join(''):'<div class="empty">Пока нет объявлений. Попробуйте изменить фильтры или загляните позже.</div>';renderStats()}
+function renderFeed(){if(!user)return;const q=$('search').value.toLowerCase(),cat=$('category').value;const arr=listings.filter(l=>(!cat||l.category===cat)&&(!q||(l.title+' '+l.city+' '+l.description).toLowerCase().includes(q)));$('listingFeed').innerHTML=arr.length?arr.map(l=>`<article class="card"><div class="row between"><span class="pill">${esc(l.category)}</span><button class="btn light favorite-btn ${favorites.some(f=>f.listing_id===l.id&&f.user_id===user.id)?'is-saved':''}" style="padding:6px 10px" aria-label="Добавить в избранное" onclick="toggleFav('${l.id}',this)">${favorites.some(f=>f.listing_id===l.id&&f.user_id===user.id)?'♥':'♡'}</button></div><h3 style="margin-top:10px">${esc(l.title)}</h3><p class="muted small">${esc(l.city)} · ${esc(l.appointment_time||'По договорённости')}</p><p>${esc(l.description)}</p><div class="row between"><strong>${esc(l.price)}</strong><button class="btn" onclick="respond('${l.id}')">${profile.role==='model'?'Откликнуться':'Подробнее'}</button></div></article>`).join(''):'<div class="empty">Пока нет объявлений. Попробуйте изменить фильтры или загляните позже.</div>';renderStats()}
 function openListing(){modal(`<h2>Новое объявление</h2><div class="field"><label>Название</label><input id="lTitle" maxlength="100" placeholder="Например, модель на маникюр"></div><div class="field"><label>Направление</label><select id="lCat"><option>Брови</option><option>Ресницы</option><option>Маникюр</option><option>Макияж</option><option>Волосы</option><option>Косметология</option><option>Другое</option></select></div><div class="field"><label>Город</label><input id="lCity" maxlength="80" placeholder="Город"></div><div class="field"><label>Условия / стоимость</label><input id="lPrice" maxlength="100" placeholder="Бесплатно / оплата расходников"></div><div class="field"><label>Когда</label><input id="lDate" maxlength="100" placeholder="По договорённости"></div><div class="field"><label>Описание</label><textarea id="lDesc" maxlength="1200" placeholder="Расскажите о процедуре и важных условиях"></textarea></div><button class="btn" style="width:100%" onclick="createListing()">Опубликовать</button><p id="listingStatus" class="small muted"></p>`)}
 async function createListing(){const title=$('lTitle').value.trim(),city=$('lCity').value.trim(),description=$('lDesc').value.trim();if(title.length<4||!city||description.length<10)return $('listingStatus').textContent='Заполните название (от 4 символов), город и описание (от 10 символов).';const row={id:'demo-listing-'+Date.now(),owner_id:user.id,title,category:$('lCat').value,city,price:$('lPrice').value.trim()||'Условия обсуждаются',appointment_time:$('lDate').value.trim()||'По договорённости',description,status:'active'};if(demoMode){listings.unshift(row);closeModal();renderFeed();renderStats();alert('Объявление добавлено только в демо-режиме. После выхода оно исчезнет.');return}const {error}=await getClient().from('listings').insert(row);if(error)return $('listingStatus').textContent='Не удалось опубликовать: '+error.message;closeModal();await refreshData();alert('Объявление опубликовано и сохранено в Supabase.')}
 async function respond(id){if(profile.role!=='model')return alert('Откликаться на объявления могут аккаунты моделей.');const already=applications.some(a=>a.listing_id===id&&a.model_id===user.id);if(already)return alert('Вы уже откликнулись на это объявление.');const message=prompt('Сообщение мастеру (необязательно):')||'';if(demoMode){applications.unshift({id:'demo-app-'+Date.now(),listing_id:id,model_id:user.id,message,status:'Новый'});renderStats();alert('Демо-отклик добавлен. Он виден только в этом демо-сеансе.');return}const {error}=await getClient().from('applications').insert({listing_id:id,model_id:user.id,message});if(error)return alert('Не удалось отправить отклик: '+error.message);await refreshData();alert('Отклик отправлен и сохранён в Supabase.')}
-async function toggleFav(id){if(profile.role!=='model')return alert('Избранное доступно аккаунтам моделей.');const found=favorites.find(f=>f.listing_id===id&&f.user_id===user.id);if(demoMode){if(found)favorites=favorites.filter(f=>f!==found);else favorites.push({id:'demo-fav-'+Date.now(),listing_id:id,user_id:user.id});renderFeed();renderStats();return}let result;if(found)result=await getClient().from('favorites').delete().eq('user_id',user.id).eq('listing_id',id);else result=await getClient().from('favorites').insert({user_id:user.id,listing_id:id});if(result.error)return alert('Не удалось изменить избранное: '+result.error.message);await refreshData()}
+function bmFavoriteBurst(button,adding){if(!button)return;button.classList.remove('bm-heart-pop');void button.offsetWidth;button.classList.add('bm-heart-pop');if(!adding)return;const symbols=['♥','✦','♡','✧','♥'];symbols.forEach((symbol,i)=>{const particle=document.createElement('span');particle.className='bm-heart-particle';particle.textContent=symbol;particle.style.setProperty('--dx',`${(i-2)*17}px`);button.append(particle);setTimeout(()=>particle.remove(),760)});}
+async function toggleFav(id,button){const found=favorites.find(f=>f.listing_id===id&&f.user_id===user.id);const adding=!found;bmFavoriteBurst(button,adding);if(demoMode){if(found)favorites=favorites.filter(f=>f!==found);else favorites.push({id:'demo-fav-'+Date.now(),listing_id:id,user_id:user.id});renderFeed();renderStats();return}const result=found?await getClient().from('favorites').delete().eq('user_id',user.id).eq('listing_id',id):await getClient().from('favorites').insert({user_id:user.id,listing_id:id});if(result.error){alert('Не удалось изменить избранное: '+result.error.message);return}await refreshData()}
 async function renderMine(){if(!user)return;let html='';if(demoMode){if(profile.role==='master'){const mine=listings.filter(l=>l.owner_id===user.id);const incoming=applications.filter(a=>mine.some(l=>l.id===a.listing_id));html='<h3>Мои объявления</h3>'+(mine.length?mine.map(l=>`<div class="card" style="margin:10px 0"><b>${esc(l.title)}</b><p class="muted small">${esc(l.city)} · ${esc(l.category)}</p><span class="pill">${incoming.filter(a=>a.listing_id===l.id).length} откликов</span></div>`).join(''):'<p class="muted">Вы ещё не создали объявления.</p>')+'<h3 style="margin-top:24px">Входящие отклики</h3>'+(incoming.length?incoming.map(a=>`<div class="card" style="margin:10px 0"><b>Демо-модель</b><p class="muted small">${esc(a.message||'Без сообщения')} · ${esc(a.status||'Новый')}</p></div>`).join(''):'<p class="muted">Пока нет откликов.</p>')}else{const own=applications.filter(a=>a.model_id===user.id);html='<h3>Мои отклики</h3>'+(own.length?own.map(a=>`<div class="card" style="margin:10px 0">${esc(listings.find(l=>l.id===a.listing_id)?.title||'Объявление')} <span class="pill">${esc(a.status||'Новый')}</span></div>`).join(''):'<p class="muted">Вы пока никуда не откликались.</p>')}const favIds=favorites.filter(f=>f.user_id===user.id).map(f=>f.listing_id);const favListings=listings.filter(l=>favIds.includes(l.id));html+='<h3 style="margin-top:24px">Избранное</h3>'+(favListings.length?favListings.map(l=>`<div class="card" style="margin:10px 0">${esc(l.title)} · ${esc(l.city)}</div>`).join(''):'<p class="muted">Здесь будут сохранённые объявления.</p>');$('mineContent').innerHTML=html;return}const client=getClient();if(profile.role==='master'){const mine=await client.from('listings').select('*').eq('owner_id',user.id).order('created_at',{ascending:false});if(mine.error){$('mineContent').textContent=mine.error.message;return}const ids=mine.data.map(l=>l.id);const incoming=ids.length?await client.from('applications').select('*').in('listing_id',ids).order('created_at',{ascending:false}):{data:[]};if(incoming.error){$('mineContent').textContent=incoming.error.message;return}const applicantIds=[...new Set((incoming.data||[]).map(a=>a.model_id))];const names=applicantIds.length?await client.from('profiles').select('id,display_name').in('id',applicantIds):{data:[]};const nameMap=Object.fromEntries((names.data||[]).map(p=>[p.id,p.display_name]));html='<h3>Мои объявления</h3>'+(mine.data.length?mine.data.map(l=>`<div class="card" style="margin:10px 0"><b>${esc(l.title)}</b><p class="muted small">${esc(l.city)} · ${esc(l.category)}</p><span class="pill">${incoming.data.filter(a=>a.listing_id===l.id).length} откликов</span></div>`).join(''):'<p class="muted">Вы ещё не создали объявления.</p>')+'<h3 style="margin-top:24px">Входящие отклики</h3>'+(incoming.data?.length?incoming.data.map(a=>`<div class="card" style="margin:10px 0"><b>${esc(nameMap[a.model_id]||'Модель')}</b> · ${esc(mine.data.find(l=>l.id===a.listing_id)?.title||'Объявление')}<p class="muted small">${esc(a.message||'Без сообщения')} · ${esc(a.status)}</p></div>`).join(''):'<p class="muted">Пока нет откликов.</p>')}else{const own=await client.from('applications').select('*').eq('model_id',user.id).order('created_at',{ascending:false});if(own.error){$('mineContent').textContent=own.error.message;return}html='<h3>Мои отклики</h3>'+(own.data.length?own.data.map(a=>`<div class="card" style="margin:10px 0">${esc(listings.find(l=>l.id===a.listing_id)?.title||'Объявление')} <span class="pill">${esc(a.status)}</span></div>`).join(''):'<p class="muted">Вы пока никуда не откликались.</p>')}const favIds=favorites.filter(f=>f.user_id===user.id).map(f=>f.listing_id);const favListings=favIds.length?await client.from('listings').select('id,title,city').in('id',favIds):{data:[]};html+='<h3 style="margin-top:24px">Избранное</h3>'+(favListings.data?.length?favListings.data.map(l=>`<div class="card" style="margin:10px 0">${esc(l.title)} · ${esc(l.city)}</div>`).join(''):'<p class="muted">Здесь будут сохранённые объявления.</p>');$('mineContent').innerHTML=html}
 
-function showDemo(role){demoMode=true;const masterId='demo-master';const modelId='demo-model';user={id:role==='master'?masterId:modelId};profile={id:user.id,role,display_name:role==='master'?'Анна — мастер':'Алина — модель',city:'Иваново',specialization:role==='master'?'Брови и ресницы':'Beauty-процедуры',experience:role==='master'?'Начинающий мастер':'Ищу мастеров для процедур',about:'Демонстрационная анкета Beauty Match.'};listings=[{id:'demo-1',owner_id:masterId,title:'Модель на оформление бровей',category:'Брови',city:'Иваново',price:'Оплата только расходников',appointment_time:'В ближайшие выходные',description:'Ищу модель для отработки формы и окрашивания. Процедура проходит в учебном формате.'},{id:'demo-2',owner_id:masterId,title:'Модель на классическое наращивание',category:'Ресницы',city:'Иваново',price:'Бесплатно',appointment_time:'По договорённости',description:'Нужна модель для пополнения портфолио. Продолжительность процедуры обсуждается заранее.'},{id:'demo-3',owner_id:'demo-master-2',title:'Маникюр для портфолио',category:'Маникюр',city:'Кохма',price:'Оплата материалов',appointment_time:'На следующей неделе',description:'Приглашаю модель на аккуратный однотонный маникюр.'}];applications=role==='master'?[{id:'demo-app-0',listing_id:'demo-1',model_id:modelId,message:'Здравствуйте! Хотела бы стать моделью.',status:'Новый'}]:[{id:'demo-app-1',listing_id:'demo-3',model_id:modelId,message:'Можно записаться?',status:'На рассмотрении'}];favorites=role==='model'?[{id:'demo-fav-1',listing_id:'demo-2',user_id:modelId}]:[];showApp();renderFeed();renderStats();}
+const demoPeople=[
+{id:'person-1',display_name:'Анна Морозова',role:'master',city:'Иваново',specialization:'Брови и ламинирование ресниц',experience:'Начинающий мастер',about:'Люблю естественные формы и аккуратную работу. Приглашаю моделей для пополнения портфолио.',created_at:'2026-11-10'},
+{id:'person-2',display_name:'Виктория Лебедева',role:'master',city:'Иваново',specialization:'Маникюр',experience:'Опыт 2 года',about:'Делаю однотонное покрытие и минималистичный дизайн. Работаю внимательно и без спешки.',created_at:'2026-11-09'},
+{id:'person-3',display_name:'Алина Сергеева',role:'model',city:'Кохма',specialization:'Интересны ресницы и макияж',experience:'Модель',about:'Открыта к новым beauty-процедурам, заранее обсуждаю условия и время.',created_at:'2026-11-08'},
+{id:'person-4',display_name:'Полина Белова',role:'master',city:'Москва',specialization:'Макияж',experience:'Опыт 1 год',about:'Создаю дневные и вечерние образы. Собираю портфолио и ищу моделей.',created_at:'2026-11-07'},
+{id:'person-5',display_name:'Мария Волкова',role:'model',city:'Иваново',specialization:'Интересны ногти и брови',experience:'Модель',about:'Хочу находить мастеров рядом и пробовать новые образы.',created_at:'2026-11-06'},
+{id:'person-6',display_name:'Екатерина Орлова',role:'master',city:'Шуя',specialization:'Уход за волосами',experience:'Опыт 3 года',about:'Делюсь работами и ищу моделей для новых техник укладки.',created_at:'2026-11-05'}
+];
+async function loadPeople(){
+ const status=$('peopleStatus');
+ if(demoMode){people=demoPeople.slice();renderPeople();status.textContent='Демонстрационные анкеты — вымышленные примеры.';return}
+ status.textContent='Загружаем анкеты…';
+ try{const {data,error}=await getClient().from('profiles').select('id,display_name,role,city,specialization,experience,about,created_at').order('created_at',{ascending:false});if(error)throw error;people=(data||[]).filter(p=>p.id!==user.id);renderPeople();status.textContent=people.length?'Показаны анкеты, доступные согласно настройкам базы.':'Пока нет опубликованных анкет.'}
+ catch(e){people=[];renderPeople();status.textContent='Не удалось загрузить общие анкеты. Проверьте таблицу profiles и правила доступа (RLS). В демо-режиме каталог доступен с примерами.'}
+}
+function renderPeople(){
+ const q=$('peopleSearch').value.trim().toLowerCase(),role=$('peopleRole').value,sort=$('peopleSort').value;
+ let arr=people.filter(p=>(role==='all'||p.role===role)&&(!q||[p.display_name,p.city,p.specialization,p.experience,p.about].filter(Boolean).join(' ').toLowerCase().includes(q)));
+ arr.sort((a,b)=>sort==='name'?String(a.display_name||'').localeCompare(String(b.display_name||''),'ru'):sort==='city'?String(a.city||'').localeCompare(String(b.city||''),'ru'):String(b.created_at||'').localeCompare(String(a.created_at||'')));
+ $('peopleFeed').innerHTML=arr.length?arr.map(p=>`<article class="card person-card"><div class="row"><div class="avatar">${esc((p.display_name||'B').trim().charAt(0).toUpperCase())}</div><div><h3>${esc(p.display_name||'Участник')}</h3><span class="pill ${p.role==='master'?'':'gray'}">${p.role==='master'?'Мастер':'Модель'}</span></div></div><p class="muted small" style="margin:13px 0 5px">⌖ ${esc(p.city||'Город не указан')}</p><p><b>${esc(p.specialization||'Направление не указано')}</b></p><p class="muted small">${esc(p.experience||'Опыт не указан')}</p><button class="btn light" style="width:100%;margin-top:8px" onclick="openPerson('${esc(p.id)}')">Посмотреть анкету</button></article>`).join(''):'<div class="empty" style="grid-column:1/-1">По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</div>';
+}
+let profileGalleryIndex=0;
+function profileGalleryMove(step){
+ const slides=[...document.querySelectorAll('#profilePortfolio .portfolio-slide')];
+ if(!slides.length)return;
+ profileGalleryIndex=(profileGalleryIndex+step+slides.length)%slides.length;
+ slides.forEach((el,i)=>el.classList.toggle('hidden',i!==profileGalleryIndex));
+ document.querySelectorAll('#profileGalleryDots .gallery-dot').forEach((el,i)=>el.classList.toggle('active',i===profileGalleryIndex));
+ $('profileGalleryCounter').textContent=`${profileGalleryIndex+1} / ${slides.length}`;
+}
+function openPerson(id){
+ const p=people.find(x=>String(x.id)===String(id));if(!p)return;
+ profileGalleryIndex=0;
+ const saved=peopleFavorites.includes(String(p.id));
+ const isMaster=p.role==='master';
+ const gallery=[
+  ['✧','Работа / портфолио','Здесь будут фотографии работ участника'],
+  ['♡','Процесс и детали','Дополнительные фотографии портфолио'],
+  ['✿','Результат','Ещё один пример работ']
+ ];
+ $('modalRoot').innerHTML=`<div class="profile-page"><div class="profile-page-inner">
+  <div class="profile-page-head"><button class="btn light" onclick="closeModal()">← Назад в каталог</button><div class="logo">beauty<span>match</span></div></div>
+  <section class="profile-cover"><div class="avatar">${esc((p.display_name||'B').trim().charAt(0).toUpperCase())}</div><div style="flex:1"><span class="eyebrow">анкета участника</span><h1 style="font-size:clamp(30px,4vw,43px);margin:5px 0 8px">${esc(p.display_name||'Участник')}</h1><span class="pill ${isMaster?'':'gray'}">${isMaster?'Мастер':'Модель'}</span><p class="muted" style="margin:8px 0 0">⌖ ${esc(p.city||'Город не указан')} · ${esc(p.specialization||'Направление не указано')}</p></div><button class="btn ${saved?'soft':'light'}" id="profileFavoriteBtn" onclick="toggleProfileFavorite('${esc(String(p.id))}')">${saved?'♥ В избранном':'♡ В избранное'}</button></section>
+  <section class="section"><div class="sectionhead"><div><div class="eyebrow">портфолио</div><h2>Работы и вдохновение</h2><p class="muted">Фотографии, которыми участник делится в своей анкете.</p></div></div>
+   <div class="portfolio-grid" id="profilePortfolio">${gallery.map((g,i)=>`<div class="portfolio-slide ${i?'hidden':''}"><div><div style="font-size:42px">${g[0]}</div><b>${g[1]}</b><p class="small" style="margin:7px 0 0">${g[2]}</p></div></div>`).join('')}</div>
+   <div class="gallery-controls"><button class="btn light" onclick="profileGalleryMove(-1)" aria-label="Предыдущее фото">←</button><div class="gallery-dots" id="profileGalleryDots">${gallery.map((_,i)=>`<span class="gallery-dot ${i===0?'active':''}"></span>`).join('')}</div><span class="small muted" id="profileGalleryCounter">1 / 3</span><button class="btn light" onclick="profileGalleryMove(1)" aria-label="Следующее фото">→</button></div>
+  </section>
+  <section class="section"><div class="eyebrow">подробности</div><h2>Об участнике</h2><div class="profile-info-grid"><div class="card"><span class="small muted">Город</span><h3>${esc(p.city||'Не указан')}</h3></div><div class="card"><span class="small muted">${isMaster?'Специализация':'Интересы'}</span><h3>${esc(p.specialization||'Не указано')}</h3></div><div class="card"><span class="small muted">Опыт</span><h3>${esc(p.experience||'Не указан')}</h3></div><div class="card"><span class="small muted">Дата регистрации</span><h3>${p.created_at?esc(String(p.created_at).slice(0,10)):'Не указана'}</h3></div><div class="card" style="grid-column:1/-1"><span class="small muted">О себе</span><p>${esc(p.about||'Участник пока не добавил описание.')}</p></div></div></section>
+  <p class="notice" style="margin-top:20px">Портфолио в этой версии — демонстрационный блок. Реальные фотографии можно будет подключить следующим этапом через загрузку в хранилище проекта.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px"><button class="btn light" onclick="closeModal()">← Вернуться к каталогу</button><button class="btn" onclick="toggleProfileFavorite('${esc(String(p.id))}')">${saved?'Убрать из избранного':'Добавить в избранное'}</button></div>
+ </div></div>`;
+}
+function toggleProfileFavorite(id){togglePersonFavorite(id);const p=people.find(x=>String(x.id)===String(id));if(!p)return;const saved=peopleFavorites.includes(String(id));const btn=$('profileFavoriteBtn');if(btn){btn.textContent=saved?'♥ В избранном':'♡ В избранное';btn.className='btn '+(saved?'soft':'light')} }
+$('peopleSearch').addEventListener('input',renderPeople);$('peopleRole').addEventListener('change',renderPeople);$('peopleSort').addEventListener('change',renderPeople);
+
+function showDemo(role){demoMode=true;const masterId='demo-master';const modelId='demo-model';user={id:role==='master'?masterId:modelId};profile={id:user.id,role,display_name:role==='master'?'Анна — мастер':'Алина — модель',city:'Иваново',specialization:role==='master'?'Брови и ресницы':'Beauty-процедуры',experience:role==='master'?'Начинающий мастер':'Ищу мастеров для процедур',about:'Демонстрационная анкета Beauty Match.'};listings=[{id:'demo-1',owner_id:masterId,title:'Модель на оформление бровей',category:'Брови',city:'Иваново',price:'Оплата только расходников',appointment_time:'В ближайшие выходные',description:'Ищу модель для отработки формы и окрашивания. Процедура проходит в учебном формате.'},{id:'demo-2',owner_id:masterId,title:'Модель на классическое наращивание',category:'Ресницы',city:'Иваново',price:'Бесплатно',appointment_time:'По договорённости',description:'Нужна модель для пополнения портфолио. Продолжительность процедуры обсуждается заранее.'},{id:'demo-3',owner_id:'demo-master-2',title:'Маникюр для портфолио',category:'Маникюр',city:'Кохма',price:'Оплата материалов',appointment_time:'На следующей неделе',description:'Приглашаю модель на аккуратный однотонный маникюр.'}];applications=role==='master'?[{id:'demo-app-0',listing_id:'demo-1',model_id:modelId,message:'Здравствуйте! Хотела бы стать моделью.',status:'Новый'}]:[{id:'demo-app-1',listing_id:'demo-3',model_id:modelId,message:'Можно записаться?',status:'На рассмотрении'}];favorites=role==='model'?[{id:'demo-fav-1',listing_id:'demo-2',user_id:modelId}]:[];showApp();renderFeed();renderStats();people=demoPeople.slice();}
 
 $('search').addEventListener('input',renderFeed);$('category').addEventListener('change',renderFeed);$('authBtn').onclick=()=>openAuth('model','signin');$('profileBtn').onclick=()=>showTab('profile');$('catalogBtn').onclick=()=>{if(user){showTab('feed')}else document.getElementById('home').scrollIntoView({behavior:'smooth'})};
 if(cfg){$('sbUrl').value=cfg.url||'';$('sbKey').value=cfg.key||''}
@@ -163,6 +336,111 @@ bmObserveCards();
 const bmContentObserver = new MutationObserver(()=>bmObserveCards(document.getElementById('app')||document));
 const bmApp=document.getElementById('app');
 if(bmApp)bmContentObserver.observe(bmApp,{childList:true,subtree:true});
+
+
+// Stage 9: дополнительные интерактивности каталога
+(function enhancePeopleCatalog(){
+ const bar=document.querySelector('#peopleTab .controls');
+ if(!bar || $('peopleShow')) return;
+ const show=document.createElement('select'); show.id='peopleShow'; show.style.maxWidth='190px'; show.innerHTML='<option value="all">Все анкеты</option><option value="favorites">Только избранные</option>';
+ const clear=document.createElement('button'); clear.id='clearPeopleFilters'; clear.type='button'; clear.className='btn light'; clear.textContent='Сбросить';
+ bar.append(show,clear);
+ const count=document.createElement('p'); count.id='peopleCount'; count.className='small muted'; count.style.margin='-3px 0 12px'; bar.after(count);
+ show.addEventListener('change',renderPeople);
+ clear.addEventListener('click',()=>{$('peopleSearch').value='';$('peopleRole').value='master';$('peopleSort').value='new';show.value='all';renderPeople();$('peopleSearch').focus()});
+ $('peopleFeed').addEventListener('click',e=>{const fav=e.target.closest('[data-person-fav]');if(fav){togglePersonFavorite(fav.dataset.personFav);return}const open=e.target.closest('[data-open-person]');if(open)openPerson(open.dataset.openPerson)});
+})();
+function togglePersonFavorite(id){id=String(id);const adding=!peopleFavorites.includes(id);const button=[...document.querySelectorAll('[data-person-fav]')].find(b=>b.dataset.personFav===id);bmFavoriteBurst(button,adding);peopleFavorites=adding?[...peopleFavorites,id]:peopleFavorites.filter(x=>x!==id);renderPeople();}
+const renderPeopleBase=renderPeople;
+renderPeople=function(){
+ const q=$('peopleSearch').value.trim().toLowerCase(),role=$('peopleRole').value,sort=$('peopleSort').value,show=$('peopleShow')?.value||'all';
+ let arr=people.filter(p=>(role==='all'||p.role===role)&&(show!=='favorites'||peopleFavorites.includes(String(p.id)))&&(!q||[p.display_name,p.city,p.specialization,p.experience,p.about].filter(Boolean).join(' ').toLowerCase().includes(q)));
+ arr.sort((a,b)=>sort==='name'?String(a.display_name||'').localeCompare(String(b.display_name||''),'ru'):sort==='city'?String(a.city||'').localeCompare(String(b.city||''),'ru'):String(b.created_at||'').localeCompare(String(a.created_at||'')));
+ $('peopleCount').textContent=`Найдено анкет: ${arr.length} · В избранном: ${peopleFavorites.length}`;
+ $('peopleFeed').innerHTML=arr.length?arr.map(p=>{const saved=peopleFavorites.includes(String(p.id));return `<article class="card person-card"><div class="row"><div class="avatar">${esc((p.display_name||'B').trim().charAt(0).toUpperCase())}</div><div style="flex:1"><h3>${esc(p.display_name||'Участник')}</h3><span class="pill ${p.role==='master'?'':'gray'}">${p.role==='master'?'Мастер':'Модель'}</span></div><button class="btn light" type="button" data-person-fav="${esc(String(p.id))}" title="${saved?'Убрать из':'Добавить в'} избранное">${saved?'♥':'♡'}</button></div><p class="muted small" style="margin:13px 0 5px">⌖ ${esc(p.city||'Город не указан')}</p><p><b>${esc(p.specialization||'Направление не указано')}</b></p><p class="muted small">${esc(p.experience||'Опыт не указан')}</p><button class="btn light" style="width:100%;margin-top:8px" data-open-person="${esc(String(p.id))}">Посмотреть анкету</button></article>`}).join(''):'<div class="empty" style="grid-column:1/-1">По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</div>';
+};
+document.addEventListener('keydown',e=>{if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){e.preventDefault();if(!$('peopleTab').classList.contains('hidden'))$('peopleSearch').focus();else $('search')?.focus();}});
+
+
+// Stage 10: сравнение анкет (только демонстрационный интерфейс каталога)
+// Stage 11: полноценная карточка анкеты с галереей, избранным и возвратом в каталог
+const peopleCompare=new Set();
+function togglePeopleCompare(id){
+ id=String(id);
+ if(peopleCompare.has(id))peopleCompare.delete(id);
+ else if(peopleCompare.size>=3){alert('Можно сравнить не больше трёх анкет одновременно.');return}
+ else peopleCompare.add(id);
+ renderPeople();
+}
+function showPeopleCompare(){
+ const selected=people.filter(p=>peopleCompare.has(String(p.id)));
+ if(!selected.length)return;
+ const rows=[['Роль',p=>p.role==='master'?'Мастер':'Модель'],['Город',p=>p.city||'Не указан'],['Направление',p=>p.specialization||'Не указано'],['Опыт',p=>p.experience||'Не указан'],['О себе',p=>p.about||'Описание отсутствует']];
+ const cards=selected.map(p=>`<article class="compare-person"><span class="compare-role">${esc(p.role==='master'?'Мастер':'Модель')}</span><h3>${esc(p.display_name||'Участник')}</h3>${rows.slice(1).map(([label,get])=>`<div class="compare-value"><b>${label}</b>${esc(get(p))}</div>`).join('')}</article>`).join('');
+ const content=`<p class="compare-note">Сравните анкеты и выберите того, кто подходит именно вам</p><div class="compare-shell" style="--compare-count:${selected.length}">${cards}</div><p class="muted small">Показаны только открытые поля анкет.</p><button class="btn light" style="width:100%;margin-top:12px" onclick="closeModal()">Готово</button>`;
+ modal(`<h2>Сравнение анкет</h2>${content}`);
+}
+const renderPeopleStage9=renderPeople;
+renderPeople=function(){
+ renderPeopleStage9();
+ const feed=$('peopleFeed');
+ feed.querySelectorAll('[data-person-fav]').forEach(btn=>{
+   const card=btn.closest('.person-card'); if(!card)return;
+   const id=btn.dataset.personFav;
+   if(card.querySelector('[data-compare-person]'))return;
+   const compare=document.createElement('button'); compare.type='button'; compare.className='btn light'; compare.dataset.comparePerson=id;
+   compare.textContent=peopleCompare.has(String(id))?'✓ В сравнении':'+ Сравнить';
+   compare.style.cssText='width:100%;margin-top:7px';
+   compare.addEventListener('click',()=>togglePeopleCompare(id));
+   card.append(compare);
+ });
+ let tray=$('peopleCompareTray');
+ if(!tray){tray=document.createElement('div');tray.id='peopleCompareTray';tray.className='card';tray.style.cssText='margin:12px 0;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap';$('peopleCount').after(tray)}
+ tray.innerHTML=`<span class="small">Выбрано для сравнения: <b>${peopleCompare.size}/3</b></span><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="runPeopleCompare" ${peopleCompare.size<2?'disabled':''}>Сравнить</button><button class="btn light" type="button" id="resetPeopleCompare" ${peopleCompare.size===0?'disabled':''}>Очистить</button></div>`;
+ $('runPeopleCompare').addEventListener('click',showPeopleCompare);
+ $('resetPeopleCompare').addEventListener('click',()=>{peopleCompare.clear();renderPeople()});
+};
+
+
+// Stage 11.1: локальная подсветка карточек следует за курсором.
+(function bmCursorGlow(){
+ const finePointer=window.matchMedia&&window.matchMedia('(pointer:fine)').matches;
+ if(!finePointer)return;
+ document.addEventListener('pointermove',e=>{
+   const card=e.target.closest('.card,.stat,.rolecard,.person-card');
+   if(!card)return;
+   const r=card.getBoundingClientRect();
+   card.style.setProperty('--bm-x',`${e.clientX-r.left}px`);
+   card.style.setProperty('--bm-y',`${e.clientY-r.top}px`);
+ },{passive:true});
+})();
+
+
+
+// Stage 13: умные фильтры, быстрый сброс и каскадное появление результатов.
+(function bmPolishCatalog(){
+ const peopleBar=document.querySelector('#peopleTab .controls');
+ const feedBar=document.querySelector('#feedTab .controls');
+ function addMeta(bar,id){if(!bar||document.getElementById(id))return null;const meta=document.createElement('div');meta.id=id;meta.className='bm-filter-meta';bar.insertAdjacentElement('afterend',meta);return meta}
+ const peopleMeta=addMeta(peopleBar,'bmPeopleMeta');
+ const feedMeta=addMeta(feedBar,'bmFeedMeta');
+ function chip(label,value){return `<span class="bm-filter-chip">${label}: <b>${value}</b></span>`}
+ function updatePeopleMeta(){if(!peopleMeta)return;const q=$('peopleSearch')?.value.trim(),role=$('peopleRole')?.value||'master',sort=$('peopleSort')?.value||'new',show=$('peopleShow')?.value||'all';const bits=[];if(q)bits.push(chip('Поиск',esc(q)));if(role!=='master')bits.push(chip('Роль',role==='all'?'Все':'Модели'));if(sort!=='new')bits.push(chip('Сортировка',sort==='name'?'По имени':'По городу'));if(show==='favorites')bits.push(chip('Подборка','Избранное'));peopleMeta.innerHTML=`<span>Настройки каталога</span>${bits.join('')||'<span>Все актуальные анкеты</span>'}`}
+ function updateFeedMeta(){if(!feedMeta)return;const q=$('search')?.value.trim(),cat=$('category')?.value;const bits=[];if(q)bits.push(chip('Поиск',esc(q)));if(cat)bits.push(chip('Направление',esc(cat)));feedMeta.innerHTML=`<span>Фильтры предложений</span>${bits.join('')||'<span>Показаны все направления</span>'}`}
+ function animateChildren(root){if(!root)return;[...root.children].forEach((el,i)=>{if(el.classList.contains('bm-list-enter'))return;el.style.setProperty('--bm-delay',Math.min(i,8)*55+'ms');el.classList.add('bm-list-enter')})}
+ const peopleFeed=$('peopleFeed'),listingFeed=$('listingFeed');
+ if(peopleFeed)new MutationObserver(()=>animateChildren(peopleFeed)).observe(peopleFeed,{childList:true});
+ if(listingFeed)new MutationObserver(()=>animateChildren(listingFeed)).observe(listingFeed,{childList:true});
+ function addResetToFeed(){if(!feedBar||$('bmResetFeed'))return;const b=document.createElement('button');b.id='bmResetFeed';b.type='button';b.className='btn light';b.textContent='Сбросить';b.addEventListener('click',()=>{$('search').value='';$('category').value='';renderFeed();updateFeedMeta()});feedBar.append(b)}
+ addResetToFeed();
+ ['peopleSearch','peopleRole','peopleSort','peopleShow'].forEach(id=>{const el=$(id);if(el){el.addEventListener('input',updatePeopleMeta);el.addEventListener('change',updatePeopleMeta)}});
+ ['search','category'].forEach(id=>{const el=$(id);if(el){el.addEventListener('input',updateFeedMeta);el.addEventListener('change',updateFeedMeta)}});
+ const clearPeople=$('clearPeopleFilters');if(clearPeople){const old=clearPeople.onclick;clearPeople.addEventListener('click',()=>setTimeout(updatePeopleMeta,0))}
+ updatePeopleMeta();updateFeedMeta();animateChildren(peopleFeed);animateChildren(listingFeed);
+ // Subtle visual confirmation when a filter is changed.
+ document.querySelectorAll('#peopleTab .controls select,#feedTab .controls select').forEach(el=>el.addEventListener('change',()=>{el.classList.remove('bm-filter-changed');void el.offsetWidth;el.classList.add('bm-filter-changed')}));
+})();
+
 
 init();
 </script></body></html>
