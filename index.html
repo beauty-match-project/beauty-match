@@ -48,6 +48,31 @@ textarea{min-height:95px;resize:vertical}.field{display:grid;gap:6px;margin:12px
 .stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px;flex:1}
 .stat strong{display:block;font:26px Georgia,serif}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding:28px}.heroart{height:170px}.orb{width:150px;height:150px;font-size:58px}.grid{grid-template-columns:1fr}.sectionhead{align-items:start;flex-direction:column}.nav{padding:12px 15px}.wrap{padding:20px 15px 55px}.hero h1{font-size:39px}}
+
+/* Beauty Match: мягкие анимации и микро-взаимодействия */
+html{scroll-behavior:smooth}
+body{opacity:0;transition:opacity .45s ease}
+body.bm-ready{opacity:1}
+.hero{animation:bm-rise .7s cubic-bezier(.2,.75,.25,1) both}
+.heroart .orb{animation:bm-float 5s ease-in-out infinite}
+.float{animation:bm-float 4.5s ease-in-out infinite}
+.f2{animation-delay:-2s}
+.card,.stat,.tabs,.sectionhead{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#efc3d1}
+.btn{transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+.btn:active,.btn.bm-pressed{transform:scale(.97)}
+.tab{transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease}
+.tab:hover{transform:translateY(-1px)}
+input,textarea,select{transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.modalback{animation:bm-fade .2s ease both}
+.modal{animation:bm-pop .28s cubic-bezier(.2,.8,.2,1) both}
+.bm-enter{animation:bm-rise .42s cubic-bezier(.2,.75,.25,1) both}
+@keyframes bm-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bm-fade{from{opacity:0}to{opacity:1}}
+@keyframes bm-pop{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes bm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
 </style>
 </head>
 <body>
@@ -114,5 +139,30 @@ function showDemo(role){demoMode=true;const masterId='demo-master';const modelId
 
 $('search').addEventListener('input',renderFeed);$('category').addEventListener('change',renderFeed);$('authBtn').onclick=()=>openAuth('model','signin');$('profileBtn').onclick=()=>showTab('profile');$('catalogBtn').onclick=()=>{if(user){showTab('feed')}else document.getElementById('home').scrollIntoView({behavior:'smooth'})};
 if(cfg){$('sbUrl').value=cfg.url||'';$('sbKey').value=cfg.key||''}
+
+// Небольшие интерактивные эффекты без сторонних библиотек.
+document.body.classList.add('bm-ready');
+document.addEventListener('pointerdown',function(e){
+  const button=e.target.closest('.btn,.tab');
+  if(!button)return;
+  button.classList.add('bm-pressed');
+  window.setTimeout(()=>button.classList.remove('bm-pressed'),160);
+});
+const bmMotionObserver = ('IntersectionObserver' in window) ? new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('bm-enter');bmMotionObserver.unobserve(entry.target)}
+  });
+},{threshold:.08}) : null;
+function bmObserveCards(root=document){
+  if(!bmMotionObserver)return;
+  root.querySelectorAll('.card,.stat').forEach(el=>{
+    if(!el.classList.contains('bm-enter'))bmMotionObserver.observe(el);
+  });
+}
+bmObserveCards();
+const bmContentObserver = new MutationObserver(()=>bmObserveCards(document.getElementById('app')||document));
+const bmApp=document.getElementById('app');
+if(bmApp)bmContentObserver.observe(bmApp,{childList:true,subtree:true});
+
 init();
 </script></body></html>
